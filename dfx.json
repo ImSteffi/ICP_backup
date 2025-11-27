@@ -5,12 +5,8 @@
       "type": "motoko"
     },
     "backup_frontend": {
-      "dependencies": [
-        "backup_backend"
-      ],
-      "source": [
-        "src/backup_frontend/dist"
-      ],
+      "dependencies": ["backup_backend"],
+      "source": ["src/backup_frontend/dist"],
       "type": "assets",
       "workspace": "backup_frontend"
     },
@@ -24,6 +20,26 @@
       },
       "type": "custom",
       "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz"
+    },
+    "db_shard_a": {
+      "main": "src/db_shard_a/main.mo",
+      "type": "motoko"
+    },
+    "db_shard_b": {
+      "main": "src/db_shard_b/main.mo",
+      "type": "motoko"
+    },
+    "db_shard_c": {
+      "main": "src/db_shard_c/main.mo",
+      "type": "motoko"
+    },
+    "db_shard_d": {
+      "main": "src/db_shard_d/main.mo",
+      "type": "motoko"
+    },
+    "db_shard_e": {
+      "main": "src/db_shard_e/main.mo",
+      "type": "motoko"
     }
   },
   "defaults": {

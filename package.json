@@ -14,5 +14,13 @@
   "type": "module",
   "workspaces": [
     "src/backup_frontend"
-  ]
+  ],
+  "dependencies": {
+    "@dfinity/agent": "^3.4.3",
+    "@dfinity/auth-client": "^3.4.3",
+    "@dfinity/identity": "^3.4.3",
+    "borc": "^3.0.0",
+    "buffer": "^6.0.3",
+    "simple-cbor": "^0.4.1"
+  }
 }

@@ -38,6 +38,10 @@ export default defineConfig({
           new URL("../declarations", import.meta.url)
         ),
       },
+      {
+        find: 'buffer',
+        replacement: 'buffer'
+      },
     ],
     dedupe: ['@dfinity/agent'],
   },
