@@ -21,14 +21,17 @@ const identityProvider =
         import.meta.env.VITE_CANISTER_ID_INTERNET_IDENTITY
       }.localhost:4943/`;
 
+const getDefaultState = (authClient = undefined) => ({
+  actor: undefined,
+  authClient,
+  isAuthenticated: false,
+  principal: "Not Authenticated",
+  role: null, // Role is an object like { owner: null } or null if no role
+});
+
 export const AuthProvider = ({ children }) => {
   const authClientRef = React.useRef();
-  const [state, setState] = useState({
-    actor: undefined,
-    authClient: undefined,
-    isAuthenticated: false,
-    principal: "Not Authenticated",
-  });
+  const [state, setState] = useState(getDefaultState());
 
   useEffect(() => {
     const initAuthClient = async () => {
@@ -52,12 +55,7 @@ export const AuthProvider = ({ children }) => {
       if (storedBootTime && storedBootTime !== bootTime.toString()) {
         await authClient.logout();
         localStorage.removeItem(BOOT_TIME_KEY);
-        setState({
-          actor: undefined,
-          authClient,
-          isAuthenticated: false,
-          principal: "Not Authenticated",
-        });
+        setState(getDefaultState(authClient));
         return;
       } else {
         localStorage.setItem(BOOT_TIME_KEY, bootTime.toString());
@@ -66,14 +64,16 @@ export const AuthProvider = ({ children }) => {
       console.error("Failed to fetch boot time", e);
     }
     const isAuthenticated = await authClient.isAuthenticated();
-    const role = await backend_canister_actor.my_role();
+    const roleResult = await backend_canister_actor.my_role();
+    // roleResult is an array: [{ owner: null }] or [] if no role
+    const role = roleResult[0] || null;
     setState((prev) => ({
       ...prev,
       actor: backend_canister_actor,
       authClient,
       isAuthenticated,
       principal: identity.getPrincipal().toString(),
-      role: role,
+      role,
     }));
   };
 
@@ -92,12 +92,7 @@ export const AuthProvider = ({ children }) => {
     if (!authClient) return;
     await authClient.logout();
     localStorage.removeItem(BOOT_TIME_KEY);
-    setState({
-      actor: undefined,
-      authClient,
-      isAuthenticated: false,
-      principal: "Not Authenticated",
-    });
+    setState(getDefaultState(authClient));
   };
 
   return (

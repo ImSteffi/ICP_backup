@@ -46,8 +46,19 @@ shared (msg) persistent actor class BackupBackend() = {
     }
   };
 
+  public shared ({caller}) func remove_role(assignee : Principal) : async () {
+    let caller_role = get_role(caller);
+    if (caller_role == ?#owner or caller_role == ?#admin) {
+      Map.remove(roles, Principal.compare, assignee);
+    } else {
+      Debug.print("Unauthorized to remove roles by " # Principal.toText(caller));
+      throw Error.reject("You are not authorized to remove roles");
+    }
+  };
+
   public shared ({ caller }) func my_role() : async ?Role {
-    get_role(caller)
+    Debug.print(Principal.toText(caller));
+    get_role(caller);
   };
 
   public shared ({ caller }) func privileged_action() : async Text {
