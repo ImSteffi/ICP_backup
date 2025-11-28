@@ -41,13 +41,13 @@ export const AuthProvider = ({ children }) => {
 
   const updateActor = async (authClient) => {
     const identity = authClient.getIdentity();
-    const agent = new HttpAgent({ identity });
+    const agent = await HttpAgent.create({ identity });
     if (import.meta.env.VITE_DFX_NETWORK !== "ic") {
       await agent.fetchRootKey();
     }
-    const actor = createActor(canisterId, { agent });
+    const backend_canister_actor = createActor(canisterId, { agent });
     try {
-      const bootTime = await fetchBootTime(actor);
+      const bootTime = await fetchBootTime(backend_canister_actor);
       const storedBootTime = localStorage.getItem(BOOT_TIME_KEY);
       if (storedBootTime && storedBootTime !== bootTime.toString()) {
         await authClient.logout();
@@ -66,12 +66,14 @@ export const AuthProvider = ({ children }) => {
       console.error("Failed to fetch boot time", e);
     }
     const isAuthenticated = await authClient.isAuthenticated();
+    const role = await backend_canister_actor.my_role();
     setState((prev) => ({
       ...prev,
-      actor,
+      actor: backend_canister_actor,
       authClient,
       isAuthenticated,
       principal: identity.getPrincipal().toString(),
+      role: role,
     }));
   };
 
